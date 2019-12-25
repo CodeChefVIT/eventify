@@ -10,27 +10,19 @@ app.use(bodyParser.urlencoded({extended:false}))
 var sd = new Date().toISOString(); 
 var ed = new Date().toISOString();
 var nam;
-app.get('/add',function(req,res){
+app.get('/addEvents', function(req, res){
   res.sendFile(__dirname + "/form.html");
-  //console.log(req.query);
-  //sd = new Date(req.query.sdate);
-  //sd = sd.toDateString();
-  //ed = new Date(req.query.edate);
-  //ed = ed.toDateString();
-  //nam = req.query.name;
-  //console.log(sd);
-  //console.log(ed);
-  // Load client secrets from a local file.
+})
+app.get('/add',function(req,res){
   console.log(req.query);
-  sd = new Date(req.query.sdate);
-  sd = sd.toDateString();
-  ed = new Date(req.query.edate);
-  ed = ed.toDateString();
-
+  sd = req.query.sdate+"T00:00:00+05:30";
+  //sd = sd.toDateString();
+  ed = req.query.edate+"T00:00:00+05:30";
+  //ed = ed.toDateString();
   nam = req.query.name;
   console.log(sd);
   console.log(ed);
-     // Load client secrets from a local file.
+  // Load client secrets from a local file.
      fs.readFile('credentials.json', (err, content) => {
       if (err) return console.log('Error loading client secret file:', err);
       // Authorize a client with credentials, then call the Google Calendar API.
@@ -98,21 +90,18 @@ app.get('/add',function(req,res){
  */
 
 var event = {
-  'summary' : 'DevJams',
+  'summary' : nam,
   'start': {
-    'dateTime': '2019-10-20T00:00:00+05:30',
-    'timeZone': 'India'
+    'dateTime': sd,
+    'timeZone' : 'Asia/Kolkata'
   },
   'end': {
-    'dateTime': '2019-10-22T00:00:00+05:30',
-    'timeZone': 'India'
+    'dateTime': ed,
+    'timeZone' : 'Asia/Kolkata'
   },
   'recurrence': [
     'RRULE:FREQ=DAILY;COUNT=2'
-  ],
-  'attendees': [
-    {'email': ['priyankkaushik13@gmail.com','shreyachatterjeeshreyash@gmail.com']},
-  ],
+  ], 
   'reminders': {
     'useDefault': false,
     'overrides': [
@@ -123,6 +112,7 @@ var event = {
 };
 
   function addEvents(auth){
+    console.log("Hooo");
     var calendar = google.calendar({version: 'v3', auth});                                                                                                                                                                                                                                                                        
     calendar.events.insert({
       auth: auth,
@@ -133,6 +123,7 @@ var event = {
         console.log('Error1: ' + err);
         return;
       }
+      console.log('Event Created');
     });
   }
 })
@@ -233,3 +224,5 @@ function listEvents(auth) {
 app.listen(3000,function(){
   console.log("Listening to port 3000");
 });
+
+
